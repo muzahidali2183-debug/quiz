@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>RGCMS Coaching Examination 2026</title>
+<meta charset="UTF-8">
+<style>
+body{font-family:Arial;margin:0;background:white;}
+.page{display:none;padding:20px;}
+h1{text-align:center;color:#004aad;}
+.center{max-width:400px;margin:auto;padding:20px;border:2px solid #004aad;border-radius:10px;}
+button{background:#004aad;color:white;padding:8px;border:none;margin:2px;cursor:pointer;}
+#timer{font-size:18px;color:red;text-align:right;}
+.qnav button{width:35px;margin:2px;}
+.green{background:green!important;color:white;}
+.red{background:red!important;color:white;}
+.question{border-bottom:1px solid #ddd;padding:10px 0;}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginPage" class="page" style="display:block;">
+<h1>RGCMS Coaching Examination 2026</h1>
+<div class="center">
+<h3>Login</h3>
+<input type="text" id="username" placeholder="Username"><br><br>
+<input type="password" id="password" placeholder="Password"><br><br>
+<button onclick="login()">Login</button>
+<p id="loginError" style="color:red;"></p>
+</div>
+</div>
+
+<!-- EXAM -->
+<div id="examPage" class="page">
+<h1>RGCMS Coaching Examination 2026</h1>
+<div id="timer">Time Left: 60:00</div>
+<form id="quizForm">
+<div id="questionsContainer"></div>
+<br>
+<button type="button" onclick="submitExam()">Submit Exam</button>
+</form>
+<h3>Question Status</h3>
+<div class="qnav" id="qnav"></div>
+</div>
+
+<!-- RESULT -->
+<div id="resultPage" class="page">
+<h1>RGCMS Coaching Examination 2026</h1>
+<div class="center">
+<h3>Result</h3>
+<p id="resultText"></p>
+<button onclick="location.reload()">Logout</button>
+</div>
+</div>
+
+<script>
+
+// LOGIN
+function login(){
+let u=username.value;
+let p=password.value;
+if((u==="admin001"&&p==="001")||(u==="admin002"&&p==="002")){
+loginPage.style.display="none";
+examPage.style.display="block";
+document.documentElement.requestFullscreen();
+startTimer();
+}else loginError.innerText="Invalid Login!";
+}
+
+// TIMER
+function startTimer(){
+let time=3600;
+let t=setInterval(()=>{
+let m=Math.floor(time/60);
+let s=time%60;
+timer.innerText="Time Left: "+m+":"+(s<10?"0":"")+s;
+time--;
+if(time<0){clearInterval(t);submitExam();}
+},1000);
+}
+
+// QUESTIONS ARRAY (REAL MCQs)
+let questions=[
+{q:"Shortcut to save document in MS Word?",o:["Ctrl+S","Ctrl+P","Ctrl+C","Ctrl+X"],a:0},
+{q:"Tab used to insert table in Word?",o:["Home","Insert","Layout","Review"],a:1},
+{q:"Default extension of MS Word?",o:[".doc",".txt",".docx",".word"],a:2},
+{q:"Feature to check spelling?",o:["Thesaurus","Word Count","Spelling & Grammar","Track Changes"],a:2},
+{q:"Header/Footer tab?",o:["Home","Insert","Design","Layout"],a:1},
+{q:"Shortcut for Bold?",o:["Ctrl+I","Ctrl+U","Ctrl+B","Ctrl+L"],a:2},
+{q:"Mail Merge used for?",o:["Editing images","Sending bulk letters","Printing charts","Creating tables"],a:1},
+{q:"Center alignment shortcut?",o:["Ctrl+L","Ctrl+R","Ctrl+E","Ctrl+J"],a:2},
+{q:"Best view for reading?",o:["Draft","Read Mode","Print Layout","Outline"],a:1},
+{q:"Max zoom in Word?",o:["200%","300%","400%","500%"],a:3},
+
+{q:"Default Excel extension?",o:[".xls",".xlsx",".csv",".xl"],a:1},
+{q:"Symbol to start formula?",o:["@","#","=","&"],a:2},
+{q:"SUM() function does?",o:["Multiply","Add","Divide","Subtract"],a:1},
+{q:"Collection of worksheets?",o:["Workbook","Spreadsheet","Database","File"],a:0},
+{q:"Best chart for trends?",o:["Pie","Bar","Line","Column"],a:2},
+{q:"Shortcut insert date?",o:["Ctrl+;","Ctrl+D","Ctrl+T","Ctrl+Y"],a:0},
+{q:"IF() function is?",o:["Loop","Conditional test","Formatting","Sorting"],a:1},
+{q:"First cell address?",o:["A0","A1","B1","1A"],a:1},
+{q:"Feature to sort data?",o:["Filter","Sort","Format","Freeze"],a:1},
+{q:"Function for average?",o:["SUM","COUNT","AVERAGE","MAX"],a:2},
+
+{q:"PowerPoint extension?",o:[".ppt",".pptx",".pps",".pwr"],a:1},
+{q:"Key to start slideshow?",o:["F1","F5","F7","F9"],a:1},
+{q:"Slide Master used to?",o:["Add video","Edit layout","Insert chart","Save file"],a:1},
+{q:"Transition applied to?",o:["Text","Slide","Image","Chart"],a:1},
+{q:"Animation applied to?",o:["Slide","Object","Background","Layout"],a:1},
+
+{q:"MS Access is?",o:["Word processor","Database software","Spreadsheet","Browser"],a:1},
+{q:"Main component of database?",o:["Slide","Table","Chart","Sheet"],a:1},
+{q:"Primary key used to?",o:["Delete","Unique record","Format","Print"],a:1},
+
+{q:"HTML stands for?",o:["Hyper Text Markup Language","High Text Machine","Hyper Tool","None"],a:0},
+{q:"Paragraph tag?",o:["<h1>","<p>","<br>","<div>"],a:1},
+{q:"Image tag?",o:["<img>","<pic>","<image>","<src>"],a:0},
+{q:"<a> tag used for?",o:["Link","Alignment","Audio","Article"],a:0},
+{q:"Ordered list tag?",o:["<ul>","<ol>","<li>","<list>"],a:1},
+{q:"Unordered list tag?",o:["<ol>","<ul>","<li>","<dl>"],a:1},
+{q:"Table row tag?",o:["<td>","<th>","<tr>","<table>"],a:2},
+{q:"Table data tag?",o:["<tr>","<td>","<th>","<data>"],a:1},
+{q:"Alt attribute used for?",o:["title","alt","src","href"],a:1},
+{q:"Line break tag?",o:["<break>","<lb>","<br>","<line>"],a:2},
+{q:"Form tag?",o:["<input>","<form>","<textarea>","<button>"],a:1},
+{q:"Password input type?",o:["text","password","hidden","secure"],a:1},
+{q:"Dropdown tag?",o:["<input>","<list>","<select>","<dropdown>"],a:2},
+{q:"Checkbox code?",o:["<check>","<box>","<input type='checkbox'>","<checkbox>"],a:2},
+{q:"Largest heading?",o:["<h6>","<head>","<h1>","<heading>"],a:2},
+{q:"Division tag?",o:["<section>","<div>","<span>","<block>"],a:1},
+{q:"Horizontal line?",o:["<line>","<hr>","<br>","<hl>"],a:1},
+{q:"Title tag?",o:["<meta>","<title>","<head>","<body>"],a:1},
+{q:"Body tag?",o:["<main>","<section>","<body>","<html>"],a:2}
+];
+
+// AUTO FILL TO 100
+while(questions.length<100){
+questions.push({q:"Sample Question "+(questions.length+1),
+o:["Option A","Option B","Option C","Option D"],a:0});
+}
+
+// RENDER QUESTIONS
+questions.forEach((item,i)=>{
+let div=document.createElement("div");
+div.className="question";
+div.innerHTML="<p>"+(i+1)+". "+item.q+"</p>";
+item.o.forEach((opt,index)=>{
+div.innerHTML+=`<input type="radio" name="q${i}" value="${index}"> ${opt}<br>`;
+});
+questionsContainer.appendChild(div);
+
+let btn=document.createElement("button");
+btn.innerText=i+1;
+btn.className="red";
+btn.id="nav"+i;
+qnav.appendChild(btn);
+});
+
+// STATUS
+quizForm.addEventListener("change",()=>{
+questions.forEach((q,i)=>{
+let sel=document.querySelector(`input[name=q${i}]:checked`);
+document.getElementById("nav"+i).className=sel?"green":"red";
+});
+});
+
+// SUBMIT
+function submitExam(){
+let score=0;
+questions.forEach((q,i)=>{
+let sel=document.querySelector(`input[name=q${i}]:checked`);
+if(sel && sel.value==q.a) score++;
+});
+let total=questions.length;
+let percent=((score/total)*100).toFixed(2);
+examPage.style.display="none";
+resultPage.style.display="block";
+resultText.innerHTML=
+"Correct: "+score+"<br>"+
+"Wrong: "+(total-score)+"<br>"+
+"Percentage: "+percent+"%";
+}
+</script>
+
+</body>
+</html>
